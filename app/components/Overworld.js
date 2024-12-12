@@ -20,6 +20,11 @@ export default class Overworld {
 
       //Establish the camera person
       const cameraPerson = this.map.gameObjects.hero;
+      // console.log(
+      //   `Player's current position: (${cameraPerson.x / 32}, ${
+      //     cameraPerson.y / 32
+      //   })`
+      // );
 
       //Update all objects
       Object.values(this.map.gameObjects).forEach((object) => {

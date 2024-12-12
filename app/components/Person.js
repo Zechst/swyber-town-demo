@@ -36,8 +36,6 @@ export default class Person extends GameObject {
   }
 
   startBehavior(state, behavior) {
-    console.log("Starting behavior:", behavior);
-
     //Set character direction to whatever behavior has
     this.direction = behavior.direction;
     if (behavior.type === "walk") {
@@ -63,7 +61,6 @@ export default class Person extends GameObject {
 
   updatePosition() {
     const [property, change] = this.directionUpdate[this.direction];
-    console.log("Updating position:", property, change);
 
     this[property] += change;
 
