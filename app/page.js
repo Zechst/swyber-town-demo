@@ -9,8 +9,7 @@ import firebaseApp from "./config/firebase";
 export default function Main() {
   useEffect(() => {
     console.log("Calling initializeFirebaseAuth...");
-
-    initializeFirebaseAuth();
+    initializeFirebaseAuth(); // Initialize Firebase authentication
   }, []);
 
   return (
