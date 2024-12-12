@@ -82,6 +82,8 @@ export const initializeFirebaseAuth = () => {
       const addedPlayer = snapshot.val();
       const characterElement = document.createElement("div");
       characterElement.classList.add("Character", "grid-cell");
+      
+
     });
   }
 
