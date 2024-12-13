@@ -93,6 +93,7 @@ function initGame(overworldMap) {
             id: key,
             x: playerData.x,
             y: playerData.y,
+            direction: playerData.direction,
             isPlayerControlled: key === playerId, // Only the local player is controllable
           });
           overworldMap.gameObjects[key].mount(overworldMap);
@@ -101,6 +102,7 @@ function initGame(overworldMap) {
           const player = overworldMap.gameObjects[key];
           player.x = playerData.x;
           player.y = playerData.y;
+          player.direction = playerData.direction;
         }
       });
     }
@@ -116,6 +118,7 @@ function initGame(overworldMap) {
         id: addedPlayer.id,
         x: addedPlayer.x,
         y: addedPlayer.y,
+        direction: addedPlayer.direction,
         isPlayerControlled: false,
       });
 
@@ -152,8 +155,9 @@ export default function Init() {
           playerData = {
             id: playerId,
             name,
-            x: utils.withGrid(3),
-            y: utils.withGrid(3),
+            x: utils.withGrid(4),
+            y: utils.withGrid(4),
+            direction: "down",
           };
 
           const hero = new Person({
@@ -161,6 +165,7 @@ export default function Init() {
             isPlayerControlled: true,
             x: playerData.x,
             y: playerData.y,
+            direction: playerData.direction,
           });
 
           // Inject hero into the map's gameObjects
