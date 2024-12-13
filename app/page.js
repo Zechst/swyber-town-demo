@@ -1,17 +1,10 @@
 "use client"; // Add this line at the top
-import { initializeFirebaseAuth } from "./app";
 
 import Head from "next/head";
 import Init from "./components/init";
 import { useEffect } from "react";
-import firebaseApp from "./config/firebase";
 
 export default function Main() {
-  useEffect(() => {
-    console.log("Calling initializeFirebaseAuth...");
-    initializeFirebaseAuth(); // Initialize Firebase authentication
-  }, []);
-
   return (
     <>
       <Head>

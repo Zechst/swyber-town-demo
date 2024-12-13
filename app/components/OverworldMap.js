@@ -75,13 +75,7 @@ if (typeof window !== "undefined") {
     DemoShop: {
       lowerSrc: "/images/maps/DemoShopLower.png",
       upperSrc: "/images/maps/DemoShopUpper.png",
-      gameObjects: {
-        hero: new Person({
-          isPlayerControlled: true,
-          x: utils.withGrid(11),
-          y: utils.withGrid(5),
-        }),
-      },
+      gameObjects: {},
       // A mixture of single-grid walls and multi-grid walls
       walls: (() => {
         const walls = {};
