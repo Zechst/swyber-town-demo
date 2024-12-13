@@ -72,9 +72,8 @@ let playerId;
 let playerRef;
 let playerData;
 
-function initGame() {
+function initGame(overworldMap) {
   const allPlayersRef = ref(database, `players`);
-  const overworldMap = window.OverworldMaps?.DemoShop;
 
   if (!overworldMap?.gameObjects) {
     overworldMap.gameObjects = {};
@@ -88,19 +87,20 @@ function initGame() {
       Object.keys(players).forEach((key) => {
         const playerData = players[key];
 
+        // Ensure the player is properly initialized
         if (!overworldMap.gameObjects[key]) {
           overworldMap.gameObjects[key] = new Person({
-            x: utils.withGrid(playerData.x),
-            y: utils.withGrid(playerData.y),
-            direction: playerData.direction,
+            id: key,
+            x: playerData.x,
+            y: playerData.y,
             isPlayerControlled: key === playerId, // Only the local player is controllable
           });
+          overworldMap.gameObjects[key].mount(overworldMap);
         } else {
           // Update existing player position and direction
           const player = overworldMap.gameObjects[key];
-          player.x = utils.withGrid(playerData.x);
-          player.y = utils.withGrid(playerData.y);
-          player.direction = playerData.direction;
+          player.x = playerData.x;
+          player.y = playerData.y;
         }
       });
     }
@@ -112,17 +112,17 @@ function initGame() {
     console.log("New player connected:", addedPlayer);
 
     if (!overworldMap.gameObjects[addedPlayer.id]) {
-      overworldMap.gameObjects[addedPlayer.id] = new Person({
-        x: utils.withGrid(addedPlayer.x),
-        y: utils.withGrid(addedPlayer.y),
-        direction: addedPlayer.direction,
+      const newPlayer = new Person({
+        id: addedPlayer.id,
+        x: addedPlayer.x,
+        y: addedPlayer.y,
         isPlayerControlled: false,
       });
 
-      console.log(
-        `Added new player to gameObjects: ${addedPlayer.id}`,
-        overworldMap.gameObjects
-      );
+      overworldMap.gameObjects[addedPlayer.id] = newPlayer;
+      newPlayer.mount(overworldMap);
+
+      console.log("Mounted new player:", newPlayer);
     }
   });
 
@@ -157,14 +157,15 @@ export default function Init() {
           };
 
           const hero = new Person({
+            id: playerId,
             isPlayerControlled: true,
             x: playerData.x,
             y: playerData.y,
-            direction: playerData.direction,
           });
 
           // Inject hero into the map's gameObjects
-          window.OverworldMaps.DemoShop.gameObjects.hero = hero;
+          const overworldMap = window.OverworldMaps.DemoShop;
+          overworldMap.gameObjects[playerId] = hero;
 
           set(playerRef, playerData)
             .then(() => {
@@ -172,13 +173,13 @@ export default function Init() {
               // Set up the Overworld map and add the hero
               const overworld = new Overworld({
                 element: gameContainer,
-                playerId: playerId,
+                playerId: playerId, // Pass playerId to Overworld
               });
 
               overworld.init(); // Start the game loop with the new hero
 
               // Begin the game now that we are signed in
-              initGame();
+              initGame(overworld.map);
             })
             .catch((error) =>
               console.error("Error initializing player data:", error)

@@ -7,6 +7,7 @@ export default class Overworld {
     this.canvas = this.element.querySelector("#game-canvas");
     this.ctx = this.canvas.getContext("2d");
     this.map = null;
+    this.playerId = config.playerId;
 
     // Match canvas size to the container
     this.canvas.width = this.element.offsetWidth;
@@ -19,7 +20,7 @@ export default class Overworld {
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
       //Establish the camera person
-      const cameraPerson = this.map.gameObjects.hero;
+      const cameraPerson = this.map.gameObjects[this.playerId];
       // console.log(
       //   `Player's current position: (${cameraPerson.x / 32}, ${
       //     cameraPerson.y / 32
