@@ -71,6 +71,24 @@ function createName() {
 let playerId;
 let playerRef;
 let playerData;
+let players = {};
+
+function handleArrowPress(xChange = 0, yChange = 0) {
+  const newX = players[playerId].x + xChange;
+  const newY = players[playerId].y + yChange;
+  if (true) {
+    //move to the next space
+    players[playerId].x = newX;
+    players[playerId].y = newY;
+    if (xChange === 1) {
+      players[playerId].direction = "right";
+    }
+    if (xChange === -1) {
+      players[playerId].direction = "left";
+    }
+    playerRef.set(players[playerId]);
+  }
+}
 
 function initGame(overworldMap) {
   const allPlayersRef = ref(database, `players`);
@@ -81,28 +99,28 @@ function initGame(overworldMap) {
 
   // Add or update players
   onValue(allPlayersRef, (snapshot) => {
-    const players = snapshot.val();
+    players = snapshot.val() || {};
 
     if (players) {
       Object.keys(players).forEach((key) => {
-        const playerData = players[key];
+        const characterState = players[key];
 
         // Ensure the player is properly initialized
         if (!overworldMap.gameObjects[key]) {
           overworldMap.gameObjects[key] = new Person({
             id: key,
-            x: playerData.x,
-            y: playerData.y,
-            direction: playerData.direction,
+            x: characterState.x,
+            y: characterState.y,
+            direction: characterState.direction,
             isPlayerControlled: key === playerId, // Only the local player is controllable
           });
           overworldMap.gameObjects[key].mount(overworldMap);
         } else {
           // Update existing player position and direction
           const player = overworldMap.gameObjects[key];
-          player.x = playerData.x;
-          player.y = playerData.y;
-          player.direction = playerData.direction;
+          player.x = characterState.x;
+          player.y = characterState.y;
+          player.direction = characterState.direction;
         }
       });
     }
