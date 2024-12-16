@@ -14,43 +14,58 @@ export default class Overworld {
     this.canvas.height = this.element.offsetHeight;
   }
 
+  gameLoopStepWork() {
+    //Clear off the canvas
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    //Establish the camera person
+    const cameraPerson = this.map.gameObjects[this.playerId];
+    // console.log(
+    //   `Player's current position: (${cameraPerson.x / 32}, ${
+    //     cameraPerson.y / 32
+    //   })`
+    // );
+
+    //Update all objects
+    Object.values(this.map.gameObjects).forEach((object) => {
+      object.update({
+        arrow: this.directionInput.direction,
+        map: this.map,
+      });
+    });
+
+    //Draw Lower layer
+    this.map.drawLowerImage(this.ctx, cameraPerson);
+
+    //Draw Game Objects
+    Object.values(this.map.gameObjects).forEach((object) => {
+      object.sprite.draw(this.ctx, cameraPerson);
+    });
+
+    //Draw Upper layer
+    this.map.drawUpperImage(this.ctx, cameraPerson);
+  }
+
   startGameLoop() {
-    const step = () => {
-      //Clear off the canvas
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    let previousMs;
+    const step = 1 / 60;
 
-      //Establish the camera person
-      const cameraPerson = this.map.gameObjects[this.playerId];
-      // console.log(
-      //   `Player's current position: (${cameraPerson.x / 32}, ${
-      //     cameraPerson.y / 32
-      //   })`
-      // );
+    const stepFn = (timestampMs) => {
+      if (previousMs === undefined) {
+        previousMs = timestampMs;
+      }
+      let delta = (timestampMs - previousMs) / 1000;
+      while (delta >= step) {
+        this.gameLoopStepWork();
+        delta -= step;
+      }
+      previousMs = timestampMs - delta * 1000;
 
-      //Update all objects
-      Object.values(this.map.gameObjects).forEach((object) => {
-        object.update({
-          arrow: this.directionInput.direction,
-          map: this.map,
-        });
-      });
-
-      //Draw Lower layer
-      this.map.drawLowerImage(this.ctx, cameraPerson);
-
-      //Draw Game Objects
-      Object.values(this.map.gameObjects).forEach((object) => {
-        object.sprite.draw(this.ctx, cameraPerson);
-      });
-
-      //Draw Upper layer
-      this.map.drawUpperImage(this.ctx, cameraPerson);
-
-      requestAnimationFrame(() => {
-        step();
-      });
+      //Business as usual tick
+      requestAnimationFrame(stepFn);
     };
-    step();
+    //First kickoff tick
+    requestAnimationFrame(stepFn);
   }
 
   init() {
